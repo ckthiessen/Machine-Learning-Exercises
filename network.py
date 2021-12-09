@@ -89,7 +89,7 @@ class Network(object):
             # a = leaky_ReLU(np.dot(w, a)+b)
         return a
 
-    def SGD(self, training_data, epochs, mini_batch_size, eta, test_data=None):
+    def SGD(self, training_data, epochs, mini_batch_size, eta, part, threshold = 0, test_data=None):
         """Train the neural network using mini-batch stochastic
         gradient descent.  The ``training_data`` is a list of tuples
         ``(x, y)`` representing the training inputs and the desired
@@ -109,6 +109,9 @@ class Network(object):
             print(f"Length of test data: {n_test}")
             print("Initial performance : {} / {}".format(self.evaluate(test_data),n_test))
 
+        f = open(f'./{part}_training.txt', 'w')
+
+        eval = 0
         for j in range(epochs):
             random.shuffle(training_data)
             mini_batches = [
@@ -117,9 +120,15 @@ class Network(object):
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)
             if test_data:
-                print("Epoch {} : {} / {}".format(j,self.evaluate(test_data),n_test))
+                eval = self.evaluate(test_data)
+                out = "Epoch {} : {} / {}".format(j,eval,n_test)
+                print(out)
+                f.write(out + '\n')
             else:
                 print("Epoch {} complete".format(j))
+        final_accuracy = eval / n_test 
+        if final_accuracy > threshold:
+            saveToFile(self, f'{part}.pkl')
 
     def update_mini_batch(self, mini_batch, eta):
         """Update the network's weights and biases by applying
