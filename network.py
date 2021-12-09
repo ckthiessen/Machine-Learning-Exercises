@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import pickle
+import time
 
 '''
 Network class for CPSC 501, Fall 2021
@@ -111,6 +112,8 @@ class Network(object):
 
         f = open(f'./{part}_training.txt', 'w')
 
+        start = time.time()
+
         eval = 0
         for j in range(epochs):
             random.shuffle(training_data)
@@ -127,6 +130,8 @@ class Network(object):
             else:
                 print("Epoch {} complete".format(j))
         final_accuracy = eval / n_test 
+        end = time.time()
+        f.write(f"Total training time: {end - start} seconds\n")
         if final_accuracy > threshold:
             saveToFile(self, f'{part}.pkl')
 
