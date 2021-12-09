@@ -1,0 +1,16 @@
+Epoch 0 : 103 / 139
+Epoch 1 : 102 / 139
+Epoch 2 : 101 / 139
+Epoch 3 : 104 / 139
+Epoch 4 : 102 / 139
+Epoch 5 : 103 / 139
+Epoch 6 : 103 / 139
+Epoch 7 : 103 / 139
+Epoch 8 : 105 / 139
+Epoch 9 : 107 / 139
+Epoch 10 : 99 / 139
+Epoch 11 : 105 / 139
+Epoch 12 : 103 / 139
+Epoch 13 : 103 / 139
+Epoch 14 : 107 / 139
+Total training time: 0.21075105667114258 seconds
