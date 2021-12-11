@@ -1,0 +1,11 @@
+Epoch 0 : 7867 / 10000
+Epoch 1 : 8860 / 10000
+Epoch 2 : 8986 / 10000
+Epoch 3 : 9070 / 10000
+Epoch 4 : 9095 / 10000
+Epoch 5 : 9109 / 10000
+Epoch 6 : 9133 / 10000
+Epoch 7 : 9163 / 10000
+Epoch 8 : 9159 / 10000
+Epoch 9 : 9176 / 10000
+Total training time: 30.153351306915283 seconds

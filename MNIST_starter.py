@@ -87,5 +87,5 @@ def prepData():
 trainingData, testingData = prepData()
 
 net = network.Network([784, 64, 64, 10])
-net.SGD(trainingData, 5, 20, 7, 'part1', 0.95, test_data = testingData)
+net.SGD(trainingData, 5, 20, 7, 'part1_improved', 0.95, test_data = testingData)
 

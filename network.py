@@ -108,9 +108,9 @@ class Network(object):
             test_data = list(test_data)
             n_test = len(test_data)
             print(f"Length of test data: {n_test}")
-            print("Initial performance : {} / {}".format(self.evaluate(test_data),n_test))
+            print("Initial performance : {} / {}".format(self.evaluate(test_data, False),n_test))
 
-        f = open(f'./{part}_training.txt', 'w')
+        logs = open(f'./{part}_training.txt', 'w')
 
         start = time.time()
 
@@ -123,15 +123,17 @@ class Network(object):
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)
             if test_data:
-                eval = self.evaluate(test_data)
+                eval = self.evaluate(test_data, j == epochs - 1, logs)
                 out = "Epoch {} : {} / {}".format(j,eval,n_test)
                 print(out)
-                f.write(out + '\n')
+                logs.write(out + '\n')
             else:
                 print("Epoch {} complete".format(j))
-        final_accuracy = eval / n_test 
+
         end = time.time()
-        f.write(f"Total training time: {end - start} seconds\n")
+        logs.write(f"Total training time: {end - start} seconds\n")
+
+        final_accuracy = eval / n_test 
         if final_accuracy > threshold:
             saveToFile(self, f'{part}.pkl')
 
@@ -188,17 +190,20 @@ class Network(object):
             nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
         return (nabla_b, nabla_w)
 
-    def evaluate(self, test_data):
+    def evaluate(self, test_data, final_epoch, file = None):
         """Return the number of test inputs for which the neural
         network outputs the correct result. Note that the neural
         network's output is assumed to be the index of whichever
         neuron in the final layer has the highest activation."""
         test_results = [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data]
+        if final_epoch:
+            out = f'[(index, failed_prediction, actual_label)]: {[(index, x, y) for index, (x, y) in enumerate(test_results) if x != y]}'
+            print(out)
+            file.write(out + '\n')
+
         return sum(int(x == y) for (x, y) in test_results)
 
     def cost_derivative(self, output_activations, y):
         """Return the vector of partial derivatives \partial C_x /
         \partial a for the output activations."""
         return (output_activations-y)
-
- 

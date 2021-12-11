@@ -77,4 +77,4 @@ def prepData(ratio = 0.7):
 trainingData, testingData = prepData()
 
 net = network.Network([9, 16, 2])
-accuracy = net.SGD(trainingData, 15, 10, 0.7, 'part3', 0.76, test_data = testingData)
+accuracy = net.SGD(trainingData, 15, 10, 0.7, 'part3_improved', 0.76, test_data = testingData)
