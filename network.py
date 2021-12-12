@@ -90,7 +90,7 @@ class Network(object):
             # a = leaky_ReLU(np.dot(w, a)+b)
         return a
 
-    def SGD(self, training_data, epochs, mini_batch_size, eta, part, threshold = 0, test_data=None):
+    def SGD(self, training_data, epochs, mini_batch_size, eta, part, threshold = 0, track_failed_pred = False, test_data=None):
         """Train the neural network using mini-batch stochastic
         gradient descent.  The ``training_data`` is a list of tuples
         ``(x, y)`` representing the training inputs and the desired
@@ -103,6 +103,7 @@ class Network(object):
         training_data = list(training_data)
         n = len(training_data)
         print(f"Length of training data: {n}")
+        print(f'{epochs = }, {mini_batch_size = }, {eta = }')
 
         if test_data:
             test_data = list(test_data)
@@ -123,19 +124,19 @@ class Network(object):
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)
             if test_data:
-                eval = self.evaluate(test_data, j == epochs - 1, logs)
+                eval = self.evaluate(test_data, track_failed_pred)
                 out = "Epoch {} : {} / {}".format(j,eval,n_test)
                 print(out)
                 logs.write(out + '\n')
+                accuracy = eval / n_test 
+                if accuracy > threshold:
+                    saveToFile(self, f'{part}.pkl')
+                    break
             else:
                 print("Epoch {} complete".format(j))
 
         end = time.time()
         logs.write(f"Total training time: {end - start} seconds\n")
-
-        final_accuracy = eval / n_test 
-        if final_accuracy > threshold:
-            saveToFile(self, f'{part}.pkl')
 
     def update_mini_batch(self, mini_batch, eta):
         """Update the network's weights and biases by applying
@@ -190,15 +191,16 @@ class Network(object):
             nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
         return (nabla_b, nabla_w)
 
-    def evaluate(self, test_data, final_epoch, file = None):
+    def evaluate(self, test_data, track_failed_prediction):
         """Return the number of test inputs for which the neural
         network outputs the correct result. Note that the neural
         network's output is assumed to be the index of whichever
         neuron in the final layer has the highest activation."""
         test_results = [(np.argmax(self.feedforward(x)), y) for (x, y) in test_data]
-        if final_epoch:
-            out = f'[(index, failed_prediction, actual_label)]: {[(index, x, y) for index, (x, y) in enumerate(test_results) if x != y]}'
-            print(out)
+        if track_failed_prediction:
+            file = open('part1_failed_predictions.txt', 'w')
+            out = f'[(index, failed_prediction, actual_label)]: \
+                {[(index, x, y) for index, (x, y) in enumerate(test_results) if x != y]}'
             file.write(out + '\n')
 
         return sum(int(x == y) for (x, y) in test_results)
